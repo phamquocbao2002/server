@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("uRWnYTpcJ193qliQD"); // <-- Thay bằng public key EmailJS của bạn
+    })();
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fef1f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
+    }
+
+    h2 {
+      color: #d6336c;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 300px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input,
+    textarea {
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #d6336c;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #statusMessage {
+      margin-top: 15px;
+      color: green;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>📬 Gửi Thư Tình qua EmailJS</h2>
+  <form onsubmit="sendMail(event)">
+    <input type="text" name="ten_doi_tuong" placeholder="Tên đối tượng" required>
+    <input type="text" name="mo_dau" placeholder="Mở đầu thư" required>
+    <input type="text" name="dai_tu_xung_ho" placeholder="Đại từ xưng hô" required>
+    <input type="text" name="link" placeholder="Link gửi đối tượng" required>
+    <input type="email" name="doi_tuong_email" placeholder="Email đối tượng" required>
+    <input type="text" name="dia_diem_thoi_gian_hen" placeholder="Địa điểm/thời gian hẹn" required>
+    <label>Ảnh đối tượng:</label>
+    <input type="file" name="avt" placeholder="AVT đối tượng" id="avt" accept="image/*" required/>
+    <button type="submit" id="submitBtn">Gửi thư</button>
+  </form>
+
+  <p id="statusMessage"></p>
+
+  <script>
+    function sendMail(event) {
+      event.preventDefault();
+      const form = event.target;
+      const data = {
+        ten_doi_tuong: form.ten_doi_tuong.value,
+        mo_dau: form.mo_dau.value,
+        dai_tu_xung_ho: form.dai_tu_xung_ho.value,
+        doi_tuong_email: form.doi_tuong_email.value,
+        dia_diem_thoi_gian_hen: form.dia_diem_thoi_gian_hen.value,
+        link:
+          form.link.value +
+          '?1=' + encodeURIComponent(form.ten_doi_tuong.value) +
+          '&2=' + encodeURIComponent(form.mo_dau.value) +
+          '&3=' + encodeURIComponent(form.dai_tu_xung_ho.value) +
+          '&4=' + encodeURIComponent(form.doi_tuong_email.value) +
+          '&5=' + encodeURIComponent(form.dia_diem_thoi_gian_hen.value)
+      };
+      const btn = document.getElementById("submitBtn");
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span>';
+      btn.disabled = true;
+
+      emailjs.send("service_164y398", "template_cw52wzi", data)
+        .then(() => {
+          document.getElementById("statusMessage").textContent = "🎉 Gửi thư thành công!";
+          form.reset();
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }, (error) => {
+          document.getElementById("statusMessage").textContent = "❌ Lỗi khi gửi thư.";
+          console.error("EmailJS error:", error);
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        });
+    }
+  </script>
+
+</body>
+
+</html>

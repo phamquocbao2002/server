@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("uRWnYTpcJ193qliQD"); // <-- Thay bằng public key của bạn
+    })();
+  </script>
+  <style>
+    body {
+      background-color: #ffe6e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .heart {
+      width: 150px;
+      height: 150px;
+      position: relative;
+      background-color: red;
+      transform: rotate(-45deg);
+      animation: heartbeat 1s infinite;
+      margin-bottom: 20px;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      width: 150px;
+      height: 150px;
+      position: absolute;
+      background-color: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -75px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: 75px;
+      top: 0;
+    }
+
+    @keyframes heartbeat {
+
+      0%,
+      100% {
+        transform: scale(1) rotate(-45deg);
+      }
+
+      50% {
+        transform: scale(1.2) rotate(-45deg);
+      }
+    }
+
+    .avatar {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 0 10px #ff6666;
+    }
+
+    h1 {
+      color: #cc0000;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #ff4d4d;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    form {
+      display: none;
+      flex-direction: column;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    input,
+    textarea {
+      padding: 8px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="heart">
+    <img src="avatar.jpg" alt="Avatar" class="avatar">
+  </div>
+
+  <h1 style="margin-top: 50px;"><b>Em - lấy param 3 nè</b> ứng tuyển bạn trai của <b>Chị Nga - lấy param 1 nè</b></h1>
+  <button onclick="showForm()">Ok thử luôn 💌</button>
+
+  <form id="infoForm" onsubmit="sendForm(event)">
+    <input type="text" name="address" placeholder="Nhập địa chỉ của chị" required>
+    <input type="text" name="phone" placeholder="Nhập số điện thoại của chị" required>
+    <textarea name="note" rows="3" placeholder="Ghi chú dễ thương hay lưu ý nè :v"></textarea>
+    <button type="submit" id="submitBtn">Gửi đến Bảo</button>
+  </form>
+
+  <p id="statusMessage" class="success"></p>
+
+  <script>
+    function showForm() {
+      document.getElementById("infoForm").style.display = "flex";
+    }
+
+    function sendForm(event) {
+      event.preventDefault();
+
+      const name = document.querySelector("h1 b").textContent;
+      const address = document.querySelector("input[name='address']").value;
+      const phone = document.querySelector("input[name='phone']").value;
+      const note = document.querySelector("textarea[name='note']").value;
+
+      const message = `🥰 Mình đồng ý nha, gửi info đến Bảo nha!\n
+Địa chỉ: ${address}\n
+Số điện thoại: ${phone}\n
+Ghi chú: ${note}`;
+      const btn = document.getElementById("submitBtn");
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span>';
+      btn.disabled = true;
+
+      emailjs.send("service_164y398", "template_dacr9c8", {
+        name: name,
+        message: message
+      }).then(() => {
+        document.getElementById("statusMessage").textContent = "🥰 Gửi thành công đến Bảo rồi đó!";
+        document.getElementById("infoForm").reset();
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }, (error) => {
+        document.getElementById("statusMessage").textContent = "😢 Gửi không thành công. Thử lại sau.";
+        console.error("Failed:", error);
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      });
+    }
+  </script>
+
+</body>
+
+</html>
